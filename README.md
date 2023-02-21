@@ -25,10 +25,11 @@ Start the Server:
 $npm run start
 ```
 ## Usage
-
+Application Screenshot:
+![application_screenshot](./assets/images/Application_Screenshot.png)
 
 Demo Video:
-<iframe src="https://drive.google.com/file/d/1gAfue0beueWrEarFwok1Rup981fTqPuN/view" width="640" height="480"></iframe>
+https://drive.google.com/file/d/1Awa5ewOoIStMCMUmnukUEl2Loz7oy84N/view
 
 
 ## License 
