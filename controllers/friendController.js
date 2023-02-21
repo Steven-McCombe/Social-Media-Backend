@@ -1,31 +1,32 @@
 const { User } = require('../models');
-
+//Error Response
+const catchError = (res, error) => {
+  res.status(500).json({ error });
+};
+//Update friends by ID
+const updateFriends = async (req, res, update) => {
+  try {
+    const userDb = await User.findOneAndUpdate(
+      { _id: req.params.userId },
+      update,
+      { new: true }
+    );
+    res.status(200).json(userDb);
+  } catch (error) {
+    catchError(res, error);
+  }
+};
+//Add Friends by iD
 const addFriend = async (req, res) => {
-  try {
-    const updatedUser = await User.findOneAndUpdate(
-      { _id: req.params.userId },
-      { $addToSet: { friends: req.params.friendId } },
-      { new: true }
-    );
-    res.status(200).json(updatedUser);
-  } catch (error) {
-    console.log(error);
-  }
+  const update = { $addToSet: { friends: req.params.friendId } };
+  updateFriends(req, res, update);
 };
-
+//Remove a friend by id
 const removeFriend = async (req, res) => {
-  try {
-    const updatedUser = await User.findOneAndUpdate(
-      { _id: req.params.userId },
-      { $pull: { friends: req.params.friendId } },
-      { new: true }
-    );
-    res.status(200).json(updatedUser);
-  } catch (error) {
-    res.status(404).json({ msg: `No users found`, error: error });
-  }
+  const update = { $pull: { friends: req.params.friendId } };
+  updateFriends(req, res, update);
 };
-
+//Export to be used in the routes
 module.exports = {
   addFriend,
   removeFriend,

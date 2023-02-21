@@ -1,49 +1,59 @@
 const { Thought, User } = require('../models');
 
+//Error response
+const catchError = (res, error) => {
+  res.status(404).json({ msg: `An Error occurred`, error });
+};
+
+//Create a thought and associate it with a user based on the request body params.
 const createThought = async (req, res) => {
   try {
     const thought = await Thought.create(req.body);
-    const updatedUser = await User.findOneAndUpdate(
+    const userDb = await User.findOneAndUpdate(
       { username: req.body.username },
       { $addToSet: { thoughts: thought._id } },
       { new: true }
     );
-    res.status(200).json({ thought, updatedUser });
+    res.status(200).json({ thought, userDb });
   } catch (error) {
-    console.log(error);
+    catchError(res, error);
   }
 };
 
-const getThought = async (req, res) => {
+//Find a thought by ID
+const findOneThought = async (req, res) => {
   try {
     const thought = await Thought.findOne({ _id: req.params.thoughtId });
     res.status(200).json(thought);
   } catch (error) {
-    res.status(404).json({ msg: `No thoughts found with id` });
+    catchError(res, error);
   }
 };
 
-const getAllThoughts = async (req, res) => {
+//Find all thoughts across the DB
+const findAllThoughts = async (req, res) => {
   try {
-    const thoughts = await Thought.find({});
-    res.status(200).json(thoughts);
+    const thought = await Thought.find({});
+    res.status(200).json(thought);
   } catch (error) {
-    res.status(404).json({ msg: `No thoughts found`, error: error });
+    catchError(res, error);
   }
 };
 
-const deleteThought = async (req, res) => {
+//Delete a thought by ID
+const deleteThoughtById = async (req, res) => {
   try {
     const deletedThought = await Thought.findByIdAndDelete({
       _id: req.params.thoughtId,
     });
     res.status(200).json({ message: 'thought deleted!', deletedThought });
   } catch (error) {
-    res.status(404).json({ msg: `No users found`, error: error });
+    catchError(res, error);
   }
 };
 
-const updateThought = async (req, res) => {
+//Update a thought by ID
+const updateThoughtById = async (req, res) => {
   try {
     const updatedThought = await Thought.findOneAndUpdate(
       { _id: req.params.thoughtId },
@@ -51,15 +61,16 @@ const updateThought = async (req, res) => {
       { runValidators: true, new: true }
     );
     res.status(200).json(updatedThought);
-  } catch (err) {
-    res.status(404).json({ msg: `No thoughts found with this id`, err: err });
+  } catch (error) {
+    catchError(res, error);
   }
 };
 
+// Export the controllers to be used by the router.
 module.exports = {
-  getAllThoughts,
-  getThought,
+  findAllThoughts,
+  findOneThought,
   createThought,
-  deleteThought,
-  updateThought,
+  deleteThoughtById,
+  updateThoughtById,
 };
